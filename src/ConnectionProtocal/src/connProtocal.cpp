@@ -1,0 +1,2 @@
+
+#define LIBRARY_
