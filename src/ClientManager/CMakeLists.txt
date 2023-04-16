@@ -9,7 +9,7 @@ endif()
 add_library(ClientMgr ${BUILD_FORM})
 
 target_compile_definitions(ClientMgr PRIVATE CLIENTMGR_EXPORT)
-target_include_directories(ClientMgr PUBLIC include)
+target_include_directories(ClientMgr PUBLIC ${CMAKE_CURRENT_LIST_DIR}/include)
 target_link_libraries(ClientMgr PUBLIC ConnectionProtocal )
 
 target_sources(ClientMgr PRIVATE ${CM_SOURCES} PUBLIC ${CM_HEADERS})

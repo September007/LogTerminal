@@ -1,7 +1,20 @@
-
 set(QT_ROOT "C:/Qt/5.15.2/msvc2019_64")
-list(PREPEND CMAKE_PREFIX_PATH "${QT_ROOT}" "${BOOST_ROOT}" )
-list(APPEND CMAKE_INCLUDE_PATH "C:/Boost")
-list(APPEND CMAKE_LIBRARY_PATH  "C:/Boost/lib")
+if(Windows)
+  list(PREPEND CMAKE_PREFIX_PATH "${QT_ROOT}" "${BOOST_ROOT}")
+  set(BOOST_INCLUDE_DIR "C:/Boost/include/boost-1_81")
+  set(BOOST_LIBRARY_DIR "C:/Boost/lib")
+  list(APPEND CMAKE_LIBRARY_PATH ${BOOST_LIBRARY_DIR} )
+elseif(Linux)
+  # set(BOOST_ROOT "/usr/local")
+  # find_package(Boost REQUIRED COMPONENTS atomic REQUIRED)
+  # message("Find boost set BOOST_INCLUDE_DIR:${BOOST_INCLUDE_DIR}")
+  set(BOOST_INCLUDE_DIR "/usr/local/include")
+endif()
+
+function(set_boost_deps target)
+  target_include_directories(${target} PRIVATE ${BOOST_INCLUDE_DIR})
+  target_link_directories(${target} PRIVATE ${BOOST_LIBRARY_DIR})
+endfunction()
+
 # override build form
 set(BUILD_FORM SHARED)

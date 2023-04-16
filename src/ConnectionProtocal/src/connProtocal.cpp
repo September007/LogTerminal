@@ -1,2 +1,6 @@
+#include <connectionProtocal.h>
+using namespace CP;
 
-#define LIBRARY_
+CP_API EndPoint * EndPoint::Create(EndPoint_Desc desc){
+   return NULL;
+} ;

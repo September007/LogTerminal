@@ -1,0 +1,9 @@
+[submodule "Helper"]
+	path = extern/Helper
+	url = git@github.com:September007/Helper.git
+[submodule "spdlog"]
+	path = extern/spdlog
+	url = https://github.com/gabime/spdlog.git
+[submodule "fmt"]
+	path = extern/fmt
+	url = https://github.com/fmtlib/fmt.git

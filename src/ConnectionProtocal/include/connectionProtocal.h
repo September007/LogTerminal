@@ -3,30 +3,17 @@
 #include <memory>
 #include <string>
 #include <string_view>
-
-#include <symbols.h>
-#ifdef CONNECTION_PROTOCAL_EXPORT
-#    define CP_API API_DESC_EXPORT
-#else
-#    define CP_API API_DESC_IMPORT
-#endif
+#include "./cp_symbol.h"
+#include "./cp_msg.h"
 namespace CP {
 
-enum class MetaType : int8_t
-{
-    None,
-    Connection,
-    Message,
-    Control,
-    MetaType_CNT
-};
-
-/* connection */
+/*************************************************************/
+/****** Packet ******/
 
 /* to build a connection: Start->Start_Resp->Start_Resp */
 /* to keep alive: send Alive */
 /* to kill connection: End->End_Resp */
-enum class ConnSig : int8_t
+enum class PackType : int8_t
 {
     None,
     Start,
@@ -34,87 +21,49 @@ enum class ConnSig : int8_t
     Alive,
     End,
     End_Resp,
+    Data,
     ConnSig_CNT
 };
-
 // in milliseconds. this is just recommendation
 #define AliveExpiredTime 1000
 
-/* Message */
 
-enum class MsgSig : int8_t
-{
-    None,
-    Text,
-    Image,
-    Append, /* append last */
-    MsgSig_CNT
+struct Packet{
+    PackType type;
+    int data_sz=0;
+    // may hold releaser inside
+    std::shared_ptr<uint8_t> data;
 };
 
-/* control */
 
-enum class ContrlSig : int8_t
-{
-    None,
-    ContlSig_CNT
-};
-
-/*************************************************************/
-/* Packet */
-
-struct Packet_Spec
-{
-    MetaType meta;
-    union
-    {
-        ConnSig conn;
-        MsgSig msg;
-        ContrlSig ctrl;
-    } detail_type;
-};
-
-struct PacketData
-{
-    std::shared_ptr<uint8_t[]> data;
-    int size;
-    auto TakeInt(int bytes)
-    {
-        int64_t ret = 0;
-        for (int i = bytes - 1; i >= 0; --i)
-            ret = (ret << 8) + data.get()[i];
-        return ret;
-    }
-    auto TakeStringView()
-    {
-        return std::string_view((char *)data.get(), size);
-    }
-    auto TakeString()
-    {
-        return std::string((char *)data.get(), size);
-    }
-};
-
-struct Packet
-{
-    Packet_Spec spec; // what is this packet
-    PacketData data;
-};
 
 /****************************************************************************/
-/* Connection */
+//****** Connection /******/
+
+/* todo: Following EndPoint is under constructing */
+enum class EndPoint_Type{
+    None,
+    Embeded,
+    SameMachine,
+    Lan,
+    Wan,
+    EndPoint_Type_NUM
+};
 
 struct EndPoint_Desc
 {
     std::string desc;
+    EndPoint_Type type=EndPoint_Type::None;
 };
 
-/* return 0 if success */
-CP_API struct CP_EndPoint
+struct EndPoint
 {
     EndPoint_Desc penpal; // pen friend
-    CP_EndPoint(EndPoint_Desc _penpal)
-        : penpal(_penpal){};
-    virtual ~CP_EndPoint() {}
+
+    EndPoint(EndPoint_Desc _penpal)
+        : penpal(_penpal){}
+        
+    virtual ~EndPoint() {}
     /* return 0 if success */
     virtual int Connect() = 0;
     /* return 0 if success */
@@ -123,7 +72,12 @@ CP_API struct CP_EndPoint
     virtual int Receive(Packet &pack) = 0;
     /* return 0 if success */
     virtual int EndConnect() = 0;
+    
+    /// @brief create EndPoint Connector
+    /// @param _desc desc for actually endpoint_type.
+    /// @return return Non-Null if success 
+    /// @note  caller is responded to release
+    CP_API static EndPoint * Create(EndPoint_Desc _desc);
 };
 
-CP_API struct CP_BST_
 } // namespace CP
