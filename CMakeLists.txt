@@ -25,7 +25,7 @@ endif()
 # custom setting
 include(${CMAKE_CURRENT_LIST_DIR}/cmake/custom.env.cmake)
 # third libs
-find_library(Qt5Core NAMEsS Qt5Core REQUIRED)
+# find_library(Qt5Core NAMEsS Qt5Core REQUIRED)
 
 # global options
 # add_link_options($<IF:$<CXX_COMPILER_ID:GNU>,"-Wl$<COMMA>--unresolved-symbols=report-all",>)

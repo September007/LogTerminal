@@ -10,17 +10,11 @@ namespace CP {
 /*************************************************************/
 /****** Packet ******/
 
-/* to build a connection: Start->Start_Resp->Start_Resp */
 /* to keep alive: send Alive */
-/* to kill connection: End->End_Resp */
 enum class PackType : int8_t
 {
     None,
-    Start,
-    Start_Resp,
     Alive,
-    End,
-    End_Resp,
     Data,
     ConnSig_CNT
 };
@@ -72,6 +66,8 @@ struct EndPoint
     virtual int Receive(Packet &pack) = 0;
     /* return 0 if success */
     virtual int EndConnect() = 0;
+    /* return 0 if ok to Send Or Receive */
+    virtual int Status() = 0;
     
     /// @brief create EndPoint Connector
     /// @param _desc desc for actually endpoint_type.

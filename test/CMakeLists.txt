@@ -13,5 +13,6 @@ foreach(src ${clients})
     target_link_libraries(C_${FILE_NAME} PUBLIC ClientMgr)
 endforeach()
 
-set_boost_deps(TEST_SINGLES_boost_log)
+set_boost_deps(TEST_SINGLES_connp)
+target_link_libraries(TEST_SINGLES_connp PUBLIC ConnectionProtocal)
 
